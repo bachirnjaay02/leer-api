@@ -11,18 +11,18 @@ class PdfController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'file'   => 'required|file|mimes:pdf|max:204800', // 200MB max
+            'file'   => 'required|file|mimes:pdf|max:204800',
             'pdf_id' => 'required|string',
         ]);
 
         $pdfId = $request->input('pdf_id');
         $file  = $request->file('file');
         $name  = $file->getClientOriginalName();
+        $path  = 'pdfs/' . $pdfId . '.pdf';
 
-        // Stocke sous storage/app/public/pdfs/{pdfId}.pdf
-        $path = $file->storeAs('pdfs', $pdfId . '.pdf', 'public');
+        Storage::disk('r2')->put($path, file_get_contents($file->getRealPath()), 'public');
 
-        $url = asset('storage/' . $path);
+        $url = rtrim(env('R2_PUBLIC_URL'), '/') . '/' . $path;
 
         return response()->json([
             'id'   => $pdfId,
@@ -34,7 +34,7 @@ class PdfController extends Controller
     // DELETE /api/pdfs/{id}
     public function destroy(string $id)
     {
-        Storage::disk('public')->delete('pdfs/' . $id . '.pdf');
+        Storage::disk('r2')->delete('pdfs/' . $id . '.pdf');
         return response()->json(['success' => true]);
     }
 }
