@@ -56,10 +56,12 @@ class SendPrayerNotifications extends Command
                 $title   = "{$info['icon']} {$info['fr']} — وقت الصلاة";
                 $body    = "C'est l'heure de {$info['fr']} · {$info['ar']}";
                 $payload = json_encode([
-                    'title' => $title,
-                    'body'  => $body,
-                    'url'   => '/prieres',
-                    'icon'  => '/logo_leer_app.svg',
+                    'title'     => $title,
+                    'body'      => $body,
+                    'url'       => '/prieres?adhan=1',
+                    'icon'      => '/logo_leer_app.svg',
+                    'is_prayer' => true,
+                    'prayer'    => $key,
                 ]);
 
                 $webPush->queueNotification(
