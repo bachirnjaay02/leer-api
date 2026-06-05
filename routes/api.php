@@ -3,6 +3,7 @@
 use App\Http\Controllers\XassidaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/xassidas',         [XassidaController::class, 'index']);
@@ -15,3 +16,8 @@ Route::delete('/pdfs/{id}',     [PdfController::class, 'destroy']);
 
 Route::get('/settings/{key}',   [SettingController::class, 'show']);
 Route::put('/settings/{key}',   [SettingController::class, 'update']);
+
+Route::get('/push/vapid-key',   [NotificationController::class, 'vapidKey']);
+Route::post('/push/subscribe',  [NotificationController::class, 'subscribe']);
+Route::delete('/push/unsubscribe', [NotificationController::class, 'unsubscribe']);
+Route::post('/push/send',       [NotificationController::class, 'send']);
