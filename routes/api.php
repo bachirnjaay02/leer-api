@@ -17,7 +17,8 @@ Route::delete('/pdfs/{id}',     [PdfController::class, 'destroy']);
 Route::get('/settings/{key}',   [SettingController::class, 'show']);
 Route::put('/settings/{key}',   [SettingController::class, 'update']);
 
-Route::get('/push/vapid-key',   [NotificationController::class, 'vapidKey']);
-Route::post('/push/subscribe',  [NotificationController::class, 'subscribe']);
-Route::delete('/push/unsubscribe', [NotificationController::class, 'unsubscribe']);
-Route::post('/push/send',       [NotificationController::class, 'send']);
+Route::get('/push/vapid-key',       [NotificationController::class, 'vapidKey']);
+Route::post('/push/subscribe',      [NotificationController::class, 'subscribe']);
+Route::put('/push/prayer-times',    [NotificationController::class, 'updatePrayerTimes']);
+Route::delete('/push/unsubscribe',  [NotificationController::class, 'unsubscribe']);
+Route::post('/push/send',           [NotificationController::class, 'send']);

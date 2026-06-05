@@ -24,15 +24,39 @@ class NotificationController extends Controller
     public function subscribe(Request $request)
     {
         $request->validate([
-            'endpoint'   => 'required|string',
-            'public_key' => 'required|string',
-            'auth_token' => 'required|string',
+            'endpoint'     => 'required|string',
+            'public_key'   => 'required|string',
+            'auth_token'   => 'required|string',
+            'prayer_times' => 'nullable|array',
+            'timezone'     => 'nullable|string',
         ]);
 
         PushSubscription::updateOrCreate(
             ['endpoint' => $request->endpoint],
-            ['public_key' => $request->public_key, 'auth_token' => $request->auth_token]
+            [
+                'public_key'   => $request->public_key,
+                'auth_token'   => $request->auth_token,
+                'prayer_times' => $request->prayer_times,
+                'timezone'     => $request->timezone ?? 'Africa/Dakar',
+            ]
         );
+
+        return response()->json(['success' => true]);
+    }
+
+    // PUT /api/push/prayer-times
+    public function updatePrayerTimes(Request $request)
+    {
+        $request->validate([
+            'endpoint'     => 'required|string',
+            'prayer_times' => 'required|array',
+            'timezone'     => 'nullable|string',
+        ]);
+
+        PushSubscription::where('endpoint', $request->endpoint)->update([
+            'prayer_times' => $request->prayer_times,
+            'timezone'     => $request->timezone ?? 'Africa/Dakar',
+        ]);
 
         return response()->json(['success' => true]);
     }
