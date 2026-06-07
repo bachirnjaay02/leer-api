@@ -12,6 +12,32 @@ class VideoController extends Controller
         return response()->json(Video::orderBy('ordre')->orderByDesc('created_at')->get());
     }
 
+    /**
+     * Suit les redirections des liens courts (vt.tiktok.com, vm.tiktok.com, youtu.be, etc.)
+     * en utilisant cURL avec un User-Agent navigateur pour éviter les blocages.
+     */
+    private function resolveShortUrl(string $url): string
+    {
+        if (!preg_match('/(?:vt|vm)\.tiktok\.com|youtu\.be/', $url)) {
+            return $url;
+        }
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 5,
+            CURLOPT_NOBODY         => true,
+            CURLOPT_TIMEOUT        => 8,
+            CURLOPT_USERAGENT      => 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+        ]);
+        curl_exec($ch);
+        $finalUrl = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+        curl_close($ch);
+
+        return $finalUrl ?: $url;
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -21,14 +47,8 @@ class VideoController extends Controller
             'ordre'       => 'nullable|integer',
         ]);
 
-        // Liens courts TikTok non supportés (vt.tiktok.com, vm.tiktok.com)
-        if (preg_match('/(?:vt|vm)\.tiktok\.com/', $request->url)) {
-            return response()->json([
-                'error' => 'Lien court TikTok non supporté. Ouvre la vidéo TikTok, appuie sur "..." → "Copier le lien" pour obtenir le lien complet.'
-            ], 422);
-        }
-
-        ['platform' => $platform, 'video_id' => $videoId] = Video::detectPlatform($request->url);
+            $resolvedUrl = $this->resolveShortUrl($request->url);
+        ['platform' => $platform, 'video_id' => $videoId] = Video::detectPlatform($resolvedUrl);
 
         if (!$platform) {
             return response()->json(['error' => 'Lien YouTube ou TikTok invalide'], 422);
@@ -37,7 +57,7 @@ class VideoController extends Controller
         $video = Video::create([
             'titre'       => $request->titre,
             'description' => $request->description,
-            'url'         => $request->url,
+            'url'         => $resolvedUrl,
             'video_id'    => $videoId,
             'platform'    => $platform,
             'ordre'       => $request->ordre ?? 0,
