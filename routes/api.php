@@ -4,6 +4,7 @@ use App\Http\Controllers\XassidaController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/xassidas',         [XassidaController::class, 'index']);
@@ -22,3 +23,7 @@ Route::post('/push/subscribe',      [NotificationController::class, 'subscribe']
 Route::put('/push/prayer-times',    [NotificationController::class, 'updatePrayerTimes']);
 Route::delete('/push/unsubscribe',  [NotificationController::class, 'unsubscribe']);
 Route::post('/push/send',           [NotificationController::class, 'send']);
+
+Route::get('/videos',         [VideoController::class, 'index']);
+Route::post('/videos',        [VideoController::class, 'store']);
+Route::delete('/videos/{id}', [VideoController::class, 'destroy']);
