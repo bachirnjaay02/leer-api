@@ -11,8 +11,9 @@ return new class extends Migration {
             $table->id();
             $table->string('titre');
             $table->text('description')->nullable();
-            $table->string('youtube_url');
-            $table->string('youtube_id');
+            $table->string('url');
+            $table->string('video_id');
+            $table->string('platform')->default('youtube'); // youtube | tiktok
             $table->integer('ordre')->default(0);
             $table->timestamps();
         });
