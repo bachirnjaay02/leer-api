@@ -6,6 +6,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\PlaylistController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\AudioController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,11 @@ Route::post('/push/send',           [NotificationController::class, 'send']);
 Route::get('/videos',         [VideoController::class, 'index']);
 Route::post('/videos',        [VideoController::class, 'store']);
 Route::delete('/videos/{id}', [VideoController::class, 'destroy']);
+
+Route::get('/events',         [EventController::class, 'index']);
+Route::get('/events/all',     [EventController::class, 'all']);
+Route::post('/events',        [EventController::class, 'store']);
+Route::delete('/events/{id}', [EventController::class, 'destroy']);
 
 Route::post('/audios',          [AudioController::class, 'upload']);
 Route::delete('/audios/{id}',   [AudioController::class, 'destroy']);
