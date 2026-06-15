@@ -17,14 +17,23 @@ class MagalVideoController extends Controller
     {
         $request->validate([
             'titre' => 'required|string|max:255',
-            'file'  => 'required|file|mimetypes:video/mp4,video/quicktime,video/webm|max:102400',
+            'file'  => 'nullable|file|mimetypes:video/mp4,video/webm|max:102400',
+            'url'   => 'nullable|string|max:500',
             'ordre' => 'nullable|integer',
         ]);
 
-        $file     = $request->file('file');
-        $filename = uniqid('magal_') . '.' . $file->getClientOriginalExtension();
-        $path     = $file->storeAs('public/magal', $filename);
-        $url      = Storage::url($path);
+        if ($request->hasFile('file')) {
+            $file     = $request->file('file');
+            $filename = uniqid('magal_') . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('magal', $file, $filename);
+            $path = 'public/magal/' . $filename;
+            $url  = '/storage/magal/' . $filename;
+        } elseif ($request->url) {
+            $path = $request->url;
+            $url  = $request->url;
+        } else {
+            return response()->json(['error' => 'Fichier ou URL requis'], 422);
+        }
 
         $video = MagalVideo::create([
             'titre'     => $request->titre,
