@@ -8,6 +8,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AudioController;
+use App\Http\Controllers\MagalVideoController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/xassidas',         [XassidaController::class, 'index']);
@@ -45,3 +46,7 @@ Route::post('/playlists',                     [PlaylistController::class, 'store
 Route::delete('/playlists/{id}',              [PlaylistController::class, 'destroy']);
 Route::post('/playlists/{id}/items',          [PlaylistController::class, 'addItem']);
 Route::delete('/playlists/items/{itemId}',    [PlaylistController::class, 'removeItem']);
+
+Route::get('/magal-videos',         [MagalVideoController::class, 'index']);
+Route::post('/magal-videos',        [MagalVideoController::class, 'store']);
+Route::delete('/magal-videos/{id}', [MagalVideoController::class, 'destroy']);
