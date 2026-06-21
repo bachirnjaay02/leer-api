@@ -11,6 +11,8 @@ use App\Http\Controllers\AudioController;
 use App\Http\Controllers\MagalVideoController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', fn() => response()->json(['status' => 'ok']));
+
 Route::get('/xassidas',         [XassidaController::class, 'index']);
 Route::post('/xassidas',        [XassidaController::class, 'store']);
 Route::put('/xassidas/{id}',    [XassidaController::class, 'update']);
